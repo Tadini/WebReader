@@ -32,6 +32,7 @@ define(function(require,exports,module){
             StorageSetter:StorageSetter
         }
     })();
+
     var Dom = {
     	top_nav: $('#top-nav'),//顶部导航
     	bottom_nav: $('.j-bot-nav'),
@@ -89,23 +90,14 @@ define(function(require,exports,module){
       var Chapter_id;
       var ChapterTotal;//总共章节数
       var init = function(UIcallback){
-      	/*getFictionInfo(function(){
-      		getCurChapterContent(Chapter_id,function(data){
-      			//TODO ...
-      			UIcallback&&UIcallback(data);
-      		});
-      	})*/
+
       	getFictionInfoPromise().then(function(){
-      		/*getCurChapterContent(Chapter_id,function(data){
-      			//TODO ...
-      			UIcallback&&UIcallback(data);
-      		});*/
       		return getCurChapterContentPromise();
       	}).then(function(data){
       		UIcallback&&UIcallback(data);
       	})
       }
-      var getFictionInfo = function(callback){
+      /*var getFictionInfo = function(callback){
       	$.get('data/chapter.json',function(data){
       		//TODO 获得章节信息之后回调
       		//默认初始化的是第一章的id
@@ -114,7 +106,7 @@ define(function(require,exports,module){
       		ChapterTotal = data.chapters.length;
       		callback&&callback();
       	},'json');
-      };
+      };*/
 
       //ES6 promise 异步调用
       var getFictionInfoPromise = function(){
@@ -135,7 +127,7 @@ define(function(require,exports,module){
 	      	},'json');
 	    });
       }
-      var getCurChapterContent = function(chapter_id,callback){
+      /*var getCurChapterContent = function(chapter_id,callback){
       	$.get('data/data'+chapter_id+'.json',function(data){
       		if(data.result == 0){
       			var url = data.jsonp;
@@ -145,7 +137,7 @@ define(function(require,exports,module){
       			});
       		}
       	},'json');
-      }
+      }*/
       //获取当前详情内容的promise对象
       var getCurChapterContentPromise = function(){
       	return new Promise(function(resolve,reject){
@@ -156,6 +148,8 @@ define(function(require,exports,module){
 	      			Util.getJSONP(url,function(data){
 	      				// callback&&callback(data);
 	      				resolve(data);
+		      			$('body').scrollTop(0);
+		      			document.title = Chapter_id;
 	      			});
 	      		}else{
 	      			// reject(data);
@@ -171,7 +165,11 @@ define(function(require,exports,module){
       		return;
       	}
       	Chapter_id-=1;
-      	getCurChapterContent(Chapter_id,UIcallback);
+      	// getCurChapterContentPromise().then(function(data){
+      	// 	UIcallback&&UIcallback(data);
+      	// });
+      	getCurChapterContentPromise().then(UIcallback);
+      	// getCurChapterContent(Chapter_id,UIcallback);
       	//记录当前章节id
       	Util.StorageSetter('last_chapter_id',Chapter_id);
       }
@@ -182,7 +180,8 @@ define(function(require,exports,module){
       		return;
       	}
       	Chapter_id+=1;
-      	getCurChapterContent(Chapter_id,UIcallback);
+      	// getCurChapterContent(Chapter_id,UIcallback);
+      	getCurChapterContentPromise().then(UIcallback);
       	//记录当前章节id
       	Util.StorageSetter('last_chapter_id',Chapter_id);
 
@@ -317,7 +316,9 @@ define(function(require,exports,module){
        	//上一章
        	$('#prev_button').click(function(){
        		//先获得章节的数据->把数据拿出来渲染
-       		readerModel.prevChapter();
+       		readerModel.prevChapter(function(data){
+       			readerUI(data);
+       		});
        	})
        	//下一章
        	$('#next_button').click(function(){
