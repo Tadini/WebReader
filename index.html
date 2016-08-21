@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html ng-app="app">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
+		<meta name="format-detection" content="telephone=no">
+		<link rel="stylesheet" href="css/reset.css">
+		<style type="text/css">
+		/*初始化body样式*/
+    		html{
+    		    width:100%;
+    		    height:100%;
+    		    overflow-x:hidden;
+    		}
+    		body{
+			    text-align:left;
+			    width:100%;
+			    overflow:hidden;
+			    background:#e9dfc7;
+			}
+			.m-read-content{
+			    font-size:14px;
+			    color:#555;
+			    line-height:32px;
+			    padding:15px;
+			}
+			.m-read-content h4{
+			    font-size:20px;
+			    color:#736357;
+			    border-bottom:solid 1px #736357;
+			    letter-spacing:2px;
+			    margin:0 0 1em 0;/*容易维护*/
+			}
+			.m-read-content p{
+			    text-indent:2em;
+			    margin:0.5em 0;
+			    letter-spacing:0px;
+			    line-height:24px;
+			}
+			.m-button-bar{
+			    width:70%;
+			    max-width:760px;
+			    padding:5px;
+			    margin:0 auto;
+			}
+			.u-tab{
+			    height:34px;
+			    margin:10px auto;
+			    line-height:34px;
+			    border-radius:8px;
+			    border:1px solid #858382;
+			    font-size:12px;
+			    background:#000;
+			    opacity:0.9;
+			    list-style:none;
+			}
+			.u-tab li{
+			    display:inline-block;
+			    width:49%;
+			    border-right:1px solid #858382;
+			    text-align:center;
+			    color:#fff;
+			}
+			.u-tab li:last-child{
+			    border-right:none;
+			}
+			/*阅读器边栏*/
+			.top-nav{
+			    position: fixed;
+			    top:0;
+			    height:50px;
+			    width:100%;
+			    z-index:9999;
+			    background:#000;
+			}
+			.icon-back{
+			    position:absolute;
+			    top:14px;
+			    left:10px;
+			    width:23px;
+			    height:23px;
+			    background: url(img/@EaSXPML.png) no-repeat center;
+			    background-size:contain;
+			}
+			.nav-title{
+			    position: absolute;
+			    top:16px;
+			    left:42px;
+			    color:#d5d5d5;
+			}
+			/*顶部工具条*/
+			.bot-nav{
+			    position:fixed;
+			    left:0;
+			    bottom:0;
+			    width:100%;
+			    height:70px;
+			    background: rgba(0, 0, 0, 0.9);
+			    z-index:9999;
+			    text-align:center;
+			}
+			.bot-nav a{
+			    width:33.33333%;
+			    float:left;
+			    height: 100%;
+			}
+			.bot-nav a span{
+			    font-size:14px;
+			    color:#fff;
+			    display:block;
+			    padding-top: 35px;
+			}
+			.bot-nav a.active{
+			    color:#DE6B00;
+			}
+			/*底部菜单*/
+			.nav-pannel{
+			    background:rgba(0,0,0,0.9);
+			    position:fixed;
+			    bottom:70px;
+			    height:135px;
+			    color:#fff;
+			    z-index:9999;
+			    width:100%;
+			}
+			.child-mod{
+			    padding:5px 10px;
+			    margin:15px;
+			}
+			.child-mod span{
+			    display:inline-block;
+			    padding-right:20px;
+			    padding-left:10px;
+			    vertical-align: middle;
+			}
+			.btn-font{
+			    background:none;
+			    border:1px solid #8c8c8c;
+			    color:#fff;
+			    border-radius:16px;
+			    padding:5px 40px;
+			}
+			.bot-item{
+				position: relative;
+			}
+			.bot-item::before{
+				content: '';
+				position: absolute;
+				top:10px;
+				left:50%;
+				margin-left: -10px;
+				width:20px;
+				height: 20px;
+			}
+			.bot-item:nth-of-type(1)::before{
+				background: url(img/0wcW9@C9.png) no-repeat center;
+				background-size: contain;
+			}
+			.bot-item:nth-of-type(2)::before{
+				background: url(img/sZwk5ja6.png) no-repeat center;
+				background-size: contain;
+			}
+			.bot-item.current:nth-of-type(2)::before{
+				background: url(img/hQ8tguOh.png) no-repeat center;
+				background-size: contain;
+			}
+			.bot-item:nth-of-type(3)::before{
+				background: url(img/vEo70Tka.png) no-repeat center;
+				background-size: contain;
+			}
+			.bot-item.current:nth-of-type(3)::before{
+				background: url(img/IOZve5iu.png) no-repeat center;
+				background-size: contain;
+			}
+			.child-mod button:nth-child(2){
+			    margin-right:20px;
+			}
+			.bk-container{
+			    position:relative;
+			    width:30px;
+			    height:30px;
+			    border-radius:15px;
+			    background:#fff;
+			    display:inline-block;
+			    vertical-align:middle;
+			    margin-right:5px;
+			}
+			.bk-container.current .bk-container-current{
+			    position:absolute;
+			    top:-2px;
+			    left:-2px;
+			    width:32px;
+			    height:32px;
+			    border-radius:16px;
+			    border:1px solid #ff7800;
+			    display:inline-block;
+			}
+			.bk-container[data-bg="0"] {
+                background: #0f1410;
+            }
+            
+            .bk-container[data-bg="1"] {
+                background: #f7eee5;
+            }
+            
+            .bk-container[data-bg="2"] {
+                background: #e9dfc7;
+            }
+            
+            .bk-container[data-bg="3"] {
+                background: #a4a4a4;
+            }
+            
+            .bk-container[data-bg="4"] {
+                background: #cdefce;
+            }
+            
+            .bk-container[data-bg="5"] {
+                background: #283548;
+            }
+            .article-action-mid{
+                position:fixed;
+                z-index:10002;
+                width:100%;
+                height:40%;
+                top:30%;
+            }
+            /*背景颜色样式设置*/
+			.container[data-bg="1"]{
+			    background: #f7eee5;
+			}
+
+			.container[data-bg="2"]{
+			    background: #e9dfc7;
+			}
+
+			.container[data-bg="3"]{
+			    background: #a4a4a4;
+			}
+
+			.container[data-bg="4"]{
+			    background: #cdefce;
+			}
+
+			.container[data-bg="5"]{
+			    color: #7685a2;
+			    background: #283548;
+			}
+
+			.container[data-night="1"]{
+			    color: #4e534f;
+			    background: #0f1410;
+			}
+			.m-article-action{
+				position: absolute;
+				top:0;
+				left:0;
+				z-index:10000;
+				width:100%;
+				height:100%;
+				overflow: hidden;
+			}
+			.no-scroll{
+				overflow: hidden;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root" class="container">
+		    <!-- <div class="m-article-action">
+		       
+		    </div> -->
+		    <!--阅读器边栏-->
+		    <div id="top-nav" class="top-nav" style="display:none;">
+		        <div class="icon-back">
+		            
+		        </div>
+		        <div class="nav-title">
+		            返回书架
+		        </div>
+		    </div>
+		    <div id="fiction_chaper_title"></div>
+		    <!--文章内容-->
+		    <div id="fiction_container" class="m-read-content">
+		       
+		    </div>
+		    <!--章节按钮-->
+		    <div class="m-button-bar">
+		        <ul class="u-tab">
+		            <li id="prev_button">上一章</li>
+		            <li id="next_button">下一章</li>
+		        </ul>
+		    </div>
+		    <!--底部菜单-->
+		    <div class="nav-pannel" id="font-container" style="display:none;">
+		        <div class="child-mod">
+		            <span>字号</span>
+		            <button id="large-font" class="btn-font">大</button>
+		            <button id="small-font" class="btn-font">小</button>
+		        </div>
+		        <div class="child-mod">
+		            <span>背景</span>
+		            <div class="bk-container current" data-bg="1">
+		                <div class="bk-container-current"></div>
+		            </div>
+		            <div class="bk-container" data-bg="2">
+		                <div class="bk-container-current"></div>
+		            </div>
+		            <div class="bk-container" data-bg="3">
+		                <div class="bk-container-current"></div>
+		            </div>
+		            <div class="bk-container" data-bg="4">
+		                <div class="bk-container-current"></div>
+		            </div>
+		            <div class="bk-container" data-bg="5">
+		                <div class="bk-container-current"></div>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="bot-nav j-bot-nav" style="display:none;">
+		        <a href="javascript:;" class="bot-item active"><span>目录</span></a>
+		        <a href="javascript:;" class="bot-item" id="font-button"><span>字体</span></a>
+		        <a href="javascript:;" class="bot-item" id="night-button"><span>夜间</span></a>
+		    </div>
+		</div>
+		<script src="js/sea.js"></script>
+		<script>
+			seajs.config({
+				base:'./js/',
+				alias:{
+					'zepto':'../lib/zepto.min.js',
+					'base64':'zepto.base64.js',
+					'jsonp':'zepto.jsonp.js'
+				}
+			});
+			//调用main.js
+			seajs.use('main.js');
+		</script>
+
+	</body>
+</html>
